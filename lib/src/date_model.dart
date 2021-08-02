@@ -375,13 +375,25 @@ class DatePickerModel extends CommonPickerModel {
 //a time picker model
 class TimePickerModel extends CommonPickerModel {
   bool showSecondsColumn;
+  DateTime maxTime;
+  DateTime minTime;
 
-  TimePickerModel(
-      {DateTime currentTime, LocaleType locale, this.showSecondsColumn: true})
+  TimePickerModel({DateTime currentTime, LocaleType locale, DateTime maxTime, DateTime minTime, this.showSecondsColumn: true})
       : super(locale: locale) {
     this.currentTime = currentTime ?? DateTime.now();
+    this.maxTime = maxTime ?? DateTime(2121, 12, 31);
+    this.minTime = minTime ?? DateTime(2021, 7, 30);
+
+    if (currentTime.compareTo(this.maxTime) > 0) {
+      currentTime = this.maxTime;
+    } else if (currentTime.compareTo(this.minTime) < 0) {
+      currentTime = this.minTime;
+    }
 
     _currentLeftIndex = this.currentTime.hour;
+    if (this.minTime != null) {
+      _currentLeftIndex = this.currentTime.hour - this.minTime.hour;
+    }
     _currentMiddleIndex = this.currentTime.minute;
     _currentRightIndex = this.currentTime.second;
   }
@@ -389,10 +401,15 @@ class TimePickerModel extends CommonPickerModel {
   @override
   String leftStringAtIndex(int index) {
     if (index >= 0 && index < 24) {
-      return digits(index, 2);
-    } else {
-      return null;
+      if (index < minTime.hour) {
+        return null;
+      } else if (index <= maxTime.hour) {
+        return digits(index, 2);
+      } else {
+        return null;
+      }
     }
+    return null;
   }
 
   @override
