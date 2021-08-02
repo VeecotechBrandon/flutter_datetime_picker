@@ -386,15 +386,12 @@ class TimePickerModel extends CommonPickerModel {
     this.minTime = minTime ?? DateTime(now.year, now.month, now.day, 9);
 
     if (currentTime.compareTo(this.maxTime) > 0) {
-      currentTime = this.maxTime;
+      this.currentTime = this.maxTime;
     } else if (currentTime.compareTo(this.minTime) < 0) {
-      currentTime = this.minTime;
+      this.currentTime = this.minTime;
     }
 
     _currentLeftIndex = this.currentTime.hour;
-    if (this.minTime != null && (currentTime.isAfter(this.minTime))) {
-      _currentLeftIndex = this.currentTime.hour - this.minTime.hour;
-    }
     _currentMiddleIndex = this.currentTime.minute;
     _currentRightIndex = this.currentTime.second;
   }
@@ -415,7 +412,7 @@ class TimePickerModel extends CommonPickerModel {
 
   @override
   String middleStringAtIndex(int index) {
-    if (index >= 0 && index < 30) {
+    if (index >= 0 && index < 60) {
       return digits(index, 2);
     } else {
       return null;
